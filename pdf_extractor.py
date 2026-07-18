@@ -1,3 +1,12 @@
+"""
+The program will take folder path for multiple pdf files as input and extract all the important data from the files
+such as text, images, page numbers etc. and return a json file with all this data which can later be coverted to a 
+python object. 
+
+Creator: Shubham Deshpande
+Version: 0.0
+
+"""
 import json
 import os
 import fitz

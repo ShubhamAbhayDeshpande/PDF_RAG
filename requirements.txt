@@ -1,0 +1,11 @@
+google-genai
+python-dotenv
+chromadb>=1.0.0
+
+pymupdf>=1.26.0
+
+pillow>=11.0.0
+
+numpy>=2.0.0
+
+tqdm>=4.66.0

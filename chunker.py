@@ -9,7 +9,7 @@ Version: 0.0
 import json
 from pathlib import Path
 import fitz
-from langchain_text_splitters import RecursiveJsonSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
 class textSplitter:
@@ -18,12 +18,12 @@ class textSplitter:
     splitted text as output. 
     
     """
-    def __init__(self, jsonObj, maxChunkSize=20, minChunkSize=100):
+    def __init__(self, jsonObj, chunkSize=100, chunkOverlap=20):
         self.jsonObj=jsonObj
-        self.minChunkSize=minChunkSize
-        self.maxChunkSize=maxChunkSize
+        self.chunkSize=chunkSize
+        self.chunkOverlap=chunkOverlap
 
-    def documentObjFromJson(self)-> list:
+    def chunksFromJson(self)-> list:
         """
         This function will accept the json object created from the document as an input and it will output a document 
         object used in the text splitter later. 
@@ -53,11 +53,19 @@ class textSplitter:
                 meta_data["image_ids"]=image_xrfs
                 meta_data["image_paths"]=image_paths 
 
+                # The following function makes only the list of document objects
                 document_list.append(
                     Document(page_content=page_data.get("text", ""), 
                              metadata=meta_data
                              )
                         )
-        
-                      
-        return document_list
+        # The list of document objects is converted to Chunks using the text splitter below.
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=self.chunkSize, 
+                                                       chunk_overlap=self.chunkOverlap
+                                                       )
+
+        # The split_documents method can take list of document_objects as input and return the chunks as output with preserved metadata. This is ideal for RAG. 
+        chunks = text_splitter.split_documents(document_list)
+
+        # return embeddings 
+        return chunks     

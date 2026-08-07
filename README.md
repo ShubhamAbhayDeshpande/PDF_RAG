@@ -142,3 +142,10 @@ The project uses the following main packages:
 - The parser currently expects PDF files to be available in the [pdfs/](pdfs) folder or in a path passed by the script logic.
 - The output JSON and extracted images are written into the repository folders so they can be inspected easily.
 - This repository is a good starting point for learning about PDF parsing, document chunking, and Gemini-based AI applications.
+
+## Changelog (recent commits)
+
+- 7d48b55: Made the final `chunker` file using `RecursiveCharacterTextSplitter.split_documents()` — the method now returns the chunks for the document objects created.
+- 579e78e: Added `README.md` and made cosmetic corrections to `chunker.py`.
+- 3ac1ca4: Started `chunk.py` implementation.
+- 541845f: Initial commit.

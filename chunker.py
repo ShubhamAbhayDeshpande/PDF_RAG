@@ -18,7 +18,7 @@ class textSplitter:
     splitted text as output. 
     
     """
-    def __init__(self, jsonObj, chunkSize=100, chunkOverlap=20):
+    def __init__(self, jsonObj: dict, chunkSize: int=1000, chunkOverlap: int =20):
         self.jsonObj=jsonObj
         self.chunkSize=chunkSize
         self.chunkOverlap=chunkOverlap
@@ -33,9 +33,9 @@ class textSplitter:
         document_list = []
 
         for doc_num, document_name in enumerate(self.jsonObj.keys()):
-             meta_data = dict()
+             # meta_data = dict()
              for pages_key in self.jsonObj[document_name].keys():
-
+                meta_data = dict()
                 # Assign the dictionary of all the page contents to a new dictionary for easier use. 
                 page_data = self.jsonObj[document_name][pages_key]
 
@@ -69,3 +69,15 @@ class textSplitter:
 
         # return embeddings 
         return chunks     
+
+
+if __name__ == "__main__":
+    json_path = Path(__file__).resolve().parent / "jsondump" / "result.json"
+
+    with open(json_path, "r") as file:
+        jsonData = json.load(file)
+
+    chunker = textSplitter(jsonData)
+
+    documents_chunks = chunker.chunksFromJson()
+    print(f"Loaded {len(documents_chunks)} document objects")

@@ -4,3 +4,6 @@
 *.json
 *.pdf
 PythonEnv
+*.pyc
+__Pychache__
+

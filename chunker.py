@@ -12,7 +12,7 @@ import fitz
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
-class textSplitter:
+class chunker:
     """
     This class will accept string object as an input and it will do the chunking for the text and return the 
     splitted text as output. 
@@ -49,7 +49,7 @@ class textSplitter:
 
                 meta_data["document_name"] = document_name
                 meta_data["page_number"] = int(pages_key)
-                meta_data["chunk_id"]="doc"+str(doc_num)+"_"+pages_key
+                meta_data["chunk_id"]="doc"+str(doc_num)+"_"+str(pages_key)
                 meta_data["image_ids"]=image_xrfs
                 meta_data["image_paths"]=image_paths 
 

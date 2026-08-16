@@ -6,7 +6,8 @@ The file to be used to test the intermediate steps and modules at the time of de
 # Imports
 
 from pdf_extractor import pdf_parser
-from chunker import textSplitter
+from chunker import chunker
+from embedder import embedder
 
 
 def main():
@@ -18,8 +19,15 @@ def main():
 
     parsed_obj = pdf_parser("pdfs")
     pdf_obj = parsed_obj.get_page_information()
-    chunks = textSplitter(pdf_obj)
-    print(chunks)
+    chunker_class_instance = chunker(pdf_obj)
+    chunks = chunker_class_instance.chunksFromJson()
+    embeddings_generator=embedder(chunks)
+    embeddings_list = embeddings_generator.embedding_generator()
+
+    for i, indi_embeddings in enumerate(embeddings_list):
+        if i==3: 
+            print(indi_embeddings[:4]) 
+    
 
     
 if __name__ == "__main__":

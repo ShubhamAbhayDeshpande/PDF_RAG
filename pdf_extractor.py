@@ -13,7 +13,7 @@ import fitz
 
 
 class pdf_parser:
-    def __init__(self, pdf_folder_path):
+    def __init__(self, pdf_folder_path: str):
         self.pdf_folder_path = pdf_folder_path
         self.save_parsed_json = True
 

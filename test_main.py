@@ -22,11 +22,15 @@ def main():
     chunker_class_instance = chunker(pdf_obj)
     chunks = chunker_class_instance.chunksFromJson()
     embeddings_generator=embedder(chunks)
-    embeddings_list = embeddings_generator.embedding_generator()
+    embeddings_generator.embedding_and_database()
 
-    for i, indi_embeddings in enumerate(embeddings_list):
-        if i==3: 
-            print(indi_embeddings[:4]) 
+    # for i, indi_embeddings in enumerate(embeddings_list):
+    #     if i==3: 
+    #         #print(indi_embeddings.len()) 
+    #         print(type(indi_embeddings))
+
+    # Once the documents are added in the chormaDB, write a short query here to check the retrival capabalities of the embeddings. 
+
     
 
     

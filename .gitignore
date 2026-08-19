@@ -6,4 +6,5 @@
 PythonEnv
 *.pyc
 __pychache__
+*.sqlite3
 

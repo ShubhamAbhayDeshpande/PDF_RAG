@@ -9,33 +9,62 @@ For the embeddings, LangChain-Hugging face embedding model is used which runs lo
 """
 # Imports
 from langchain_huggingface import HuggingFaceEmbeddings
+import chromadb
+import os
+
+# Constants
+CHORMA_DB_PATH="chroma_db/"
+EMBEDING_MODEL="sentence-transformers/all-MiniLM-L6-v2"
+COLLECTION_NAME="pdfDocs"
+
 
 class embedder:
     def __init__(self, chunks):
         self.chunks = chunks
+        self.query_list=[]
+        self.ids_list=[]
 
         # Importing model
         self.embedding_model=HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
+            model_name=EMBEDING_MODEL,
             encode_kwargs={"normalize_embeddings": True},
             )
 
-        # List of all the text 
+        # List of all the text and metadata associated with the text
         self._documentTextLilst = [chunk.page_content for chunk in self.chunks]
+        self.metadataList = [chunk.metadata for chunk in self.chunks]
+
+        # TEMP CODE: Check if the db with this name already exists in the folder. If yes, delete it. 
+        for fname in os.listdir(r"chroma_db"):
+            if fname.endswith("sqlite3"):
+                os.remove(os.path.join("chroma_db", fname))
 
         
 
-    def embedding_generator(self) -> list:
+    def embedding_and_database(self) -> list:
         """
         This method will take the cunks from the langchain generator as inputs and will produce the chunks using 'all-MiniLM-L6-v2' as embeddings model. 
         """
-        query_list = [self.embedding_model.embed_query(text) for text in self._documentTextLilst]
-        return query_list
-        
+        # .embed_documents() is a method used for making the vectors for the source documents in a RAG. 
+        # The ids we just need for the chromadb
+        for ids , _ in enumerate(self._documentTextLilst):
+            self.ids_list.append(f"id{ids}")
+        self.query_list = self.embedding_model.embed_documents(self._documentTextLilst)
 
-        
-        
-        
+        print("debugger print")
 
-        
-        
+       # Make vector database
+       # Make a local chromadb server to store the vector data later on. 
+        client = chromadb.PersistentClient(path=r"chroma_db") # Persistent Client to store the data. 
+       
+        # Collections are fundamental units for managing vector database and running queries in the database. 
+        collection = client.create_collection(name="pdf_collection")
+
+        # Add data into the collection
+        collection.add(
+            ids=self.ids_list,
+            embeddings=self.query_list,
+            metadatas=self.metadataList
+        )
+
+

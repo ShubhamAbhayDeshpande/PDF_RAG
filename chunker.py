@@ -8,7 +8,7 @@ Version: 0.0
 # Imports
 import json
 from pathlib import Path
-import fitz
+import json
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
@@ -50,8 +50,8 @@ class chunker:
                 meta_data["document_name"] = document_name
                 meta_data["page_number"] = int(pages_key)
                 meta_data["chunk_id"]="doc"+str(doc_num)+"_"+str(pages_key)
-                meta_data["image_ids"]=image_xrfs
-                meta_data["image_paths"]=image_paths 
+                meta_data["image_ids"]=json.dumps(image_xrfs) 
+                meta_data["image_paths"]=json.dumps(image_paths) 
 
                 # The following function makes only the list of document objects
                 document_list.append(

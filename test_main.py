@@ -8,7 +8,10 @@ The file to be used to test the intermediate steps and modules at the time of de
 from pdf_extractor import pdf_parser
 from chunker import chunker
 from embedder import embedder
+import chromadb
 
+# Constants: 
+QUERY_TEXT = "What is IP-Mask and how to use it?"
 
 def main():
 
@@ -24,15 +27,19 @@ def main():
     embeddings_generator=embedder(chunks)
     embeddings_generator.embedding_and_database()
 
-    # for i, indi_embeddings in enumerate(embeddings_list):
-    #     if i==3: 
-    #         #print(indi_embeddings.len()) 
-    #         print(type(indi_embeddings))
+    # Make an embedding method using the langchain 
+    query = embeddings_generator.query_embedding(QUERY_TEXT)
 
-    # Once the documents are added in the chormaDB, write a short query here to check the retrival capabalities of the embeddings. 
+    # Define chromadb collection and client
+    client = chromadb.PersistentClient(path=r"chroma_db")
+    collection = client.get_collection(name="pdf_collection")
 
-    
+    result = collection.query(
+        query_embeddings=query,
+        n_results=5
+    )
 
+    print(result) 
     
 if __name__ == "__main__":
     main()

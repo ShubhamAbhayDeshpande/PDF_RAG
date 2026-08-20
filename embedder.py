@@ -21,7 +21,7 @@ COLLECTION_NAME="pdfDocs"
 class embedder:
     def __init__(self, chunks):
         self.chunks = chunks
-        self.query_list=[]
+        self.document_embedding=[]
         self.ids_list=[]
 
         # Importing model
@@ -49,9 +49,7 @@ class embedder:
         # The ids we just need for the chromadb
         for ids , _ in enumerate(self._documentTextLilst):
             self.ids_list.append(f"id{ids}")
-        self.query_list = self.embedding_model.embed_documents(self._documentTextLilst)
-
-        print("debugger print")
+        self.document_embedding = self.embedding_model.embed_documents(self._documentTextLilst)
 
        # Make vector database
        # Make a local chromadb server to store the vector data later on. 
@@ -63,8 +61,20 @@ class embedder:
         # Add data into the collection
         collection.add(
             ids=self.ids_list,
-            embeddings=self.query_list,
+            embeddings=self.document_embedding,
             metadatas=self.metadataList
         )
+
+    def query_embedding(self, query_text: str) -> list:
+        """
+        Method used for embedding user query. Returns list of query embeddings. 
+        
+        return: list
+        
+        """
+
+        query_embedding = self.embedding_model.embed_query(query_text)
+
+        return query_embedding
 
 

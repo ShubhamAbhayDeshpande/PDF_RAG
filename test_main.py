@@ -9,6 +9,8 @@ from pdf_extractor import pdf_parser
 from chunker import chunker
 from embedder import embedder
 import chromadb
+import os
+import retriever
 
 # Constants: 
 QUERY_TEXT = "What is IP-Mask and how to use it?"
@@ -20,26 +22,29 @@ def main():
     # 3. Make embeddings
     # 4. Vectorize embeddings
 
-    parsed_obj = pdf_parser("pdfs")
-    pdf_obj = parsed_obj.get_page_information()
-    chunker_class_instance = chunker(pdf_obj)
-    chunks = chunker_class_instance.chunksFromJson()
-    embeddings_generator=embedder(chunks)
-    embeddings_generator.embedding_and_database()
-
-    # Make an embedding method using the langchain 
-    query = embeddings_generator.query_embedding(QUERY_TEXT)
-
-    # Define chromadb collection and client
+    # Check if the chormadb exists: 
+    collection=None
     client = chromadb.PersistentClient(path=r"chroma_db")
     collection = client.get_collection(name="pdf_collection")
+
+    if collection is None:
+        parsed_obj = pdf_parser("pdfs")
+        pdf_obj = parsed_obj.get_page_information()
+        chunker_class_instance = chunker(pdf_obj)
+        chunks = chunker_class_instance.chunksFromJson()
+        embeddings_generator=embedder(chunks)
+        embeddings_generator.embedding_and_database()
+
+    # Make an embedding method using the langchain 
+    retriever_function = retriever.retriever()
+    query = retriever_function.query_embedding(QUERY_TEXT)
 
     result = collection.query(
         query_embeddings=query,
         n_results=5
     )
 
-    print(result) 
+    print(len(result.get("metadatas")[0])) 
     
 if __name__ == "__main__":
     main()

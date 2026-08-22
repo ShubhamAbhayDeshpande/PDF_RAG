@@ -61,6 +61,7 @@ class embedder:
         # Add data into the collection
         collection.add(
             ids=self.ids_list,
+            documents=self._documentTextLilst,
             embeddings=self.document_embedding,
             metadatas=self.metadataList
         )

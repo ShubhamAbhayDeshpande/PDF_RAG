@@ -28,6 +28,9 @@ import chromadb
 # Import local modules from the repo
 import retriever
 from llm_api import LLMAPI
+from pdf_extractor import pdf_parser
+from chunker import chunker
+from embedder import embedder
 
 # Helpers
 
@@ -59,8 +62,10 @@ class RAGApp:
             self.client = chromadb.PersistentClient(path=r"chroma_db")
             self.collection = self.client.get_collection(name="pdf_collection")
         except Exception as e:
-            self.collection = None
-            print("Warning: couldn't open chroma collection:", e)
+            self._make_dataset_first()
+            self.client = chromadb.PersistentClient(path=r"chroma_db")
+            self.collection = self.client.get_collection(name="pdf_collection")
+            print("New Chroma database made with documents")
 
         # retriever and LLM instances
         self.retriever = retriever.retriever()
@@ -147,12 +152,18 @@ class RAGApp:
         thread.start()
 
     def _process_question(self, question):
-        try:
-            answer, documents = self._retrieve_and_call_llm(question)
-        except Exception as e:
-            self._append_chat("System", f"Error during retrieval/LLM call: {e}")
-            self.send_button.config(state=tk.NORMAL)
-            return
+        # try:
+        #     answer, documents = self._retrieve_and_call_llm(question)
+        # except Exception as e:
+        #     self._append_chat("System", f"Error during retrieval/LLM call: {e}")
+        #     self.send_button.config(state=tk.NORMAL)
+        #     return
+
+        # if self.collection is None:
+        #     # raise RuntimeError("chroma collection not found. Build the collection first (run test_main.py or ensure chroma_db exists).")
+        #     self._make_dataset_first()
+
+        answer, documents = self._retrieve_and_call_llm(question)
 
         # update UI with retrieved context and answer
         self.root.after(0, lambda: self._update_context_display(documents))
@@ -160,8 +171,6 @@ class RAGApp:
         self.send_button.config(state=tk.NORMAL)
 
     def _retrieve_and_call_llm(self, question):
-        if self.collection is None:
-            raise RuntimeError("chroma collection not found. Build the collection first (run test_main.py or ensure chroma_db exists).")
 
         # 1. compute embedding for query
         query_emb = self.retriever.query_embedding(question)
@@ -220,6 +229,15 @@ class RAGApp:
         answer = self.llm.generate_answer(question=question, context=CONTEXT)
 
         return answer, documents_display
+
+    def _make_dataset_first(self):
+        os.makedirs("chroma_db", exist_ok=True)
+        parsed_obj = pdf_parser("pdfs")
+        pdf_obj = parsed_obj.get_page_information()
+        chunker_class_instance = chunker(pdf_obj)
+        chunks = chunker_class_instance.chunksFromJson()
+        embeddings_generator = embedder(chunks)
+        embeddings_generator.embedding_and_database()
 
     def _update_context_display(self, documents):
         # Clear current items

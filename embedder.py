@@ -10,7 +10,6 @@ For the embeddings, LangChain-Hugging face embedding model is used which runs lo
 # Imports
 from langchain_huggingface import HuggingFaceEmbeddings
 import chromadb
-import os
 
 # Constants
 CHORMA_DB_PATH="chroma_db/"
@@ -33,12 +32,6 @@ class embedder:
         # List of all the text and metadata associated with the text
         self._documentTextLilst = [chunk.page_content for chunk in self.chunks]
         self.metadataList = [chunk.metadata for chunk in self.chunks]
-
-        # TEMP CODE: Check if the db with this name already exists in the folder. If yes, delete it. 
-        for fname in os.listdir(r"chroma_db"):
-            if fname.endswith("sqlite3"):
-                os.remove(os.path.join("chroma_db", fname))
-
         
 
     def embedding_and_database(self) -> list:

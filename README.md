@@ -24,8 +24,6 @@ The supplied example shows the final Tkinter layout in operation:
 
 ![Example of the working RAG GUI](gui-example.png)
 
-> `gui-example.png` is the screenshot supplied with the project description. Copy the supplied screenshot into the repository root with this filename when publishing the README so the image is rendered by GitHub or another Markdown viewer.
-
 ## Repository structure
 
 - [app.py](app.py) — Tkinter RAG chat application. It opens or builds the Chroma dataset, retrieves five results, calls Gemini, and updates the chat and context panes.

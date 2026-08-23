@@ -11,8 +11,11 @@ from embedder import embedder
 import chromadb
 import os
 import retriever
+import json
+from llm_api import LLMAPI
 
-# Constants: 
+# Constants:
+# TBD: Change this so that this value is accepted from the GUI.  
 QUERY_TEXT = "What is IP-Mask and how to use it?"
 
 def main():
@@ -44,7 +47,33 @@ def main():
         n_results=5
     )
 
-    print(len(result.get("metadatas")[0])) 
+    output_document_lst = result.get("documents")
+    # Add context from the retrieved documents
+    CONTEXT = " "
+    for info in output_document_lst[0]:
+        CONTEXT =  CONTEXT+info 
+
+    # Identify the references for citations. 
+    document_name_lst = []
+    image_paths = []
+    page_numbers_lst=[]
+    output_metadata_lst = result.get("metadatas")[0]
+    for individual_metadata in output_metadata_lst: 
+        document_name_lst.append(individual_metadata.get("document_name"))
+        image_paths_lst = json.loads(individual_metadata.get("image_paths"))
+        page_numbers_lst.append(individual_metadata.get("page_number"))
+        # Do only if there are reference images present:
+        if len(image_paths_lst)!=0: 
+            image_paths.extend(image_paths_lst)
+
+    # Calling LLM API with context: 
+    api_call = LLMAPI()
+
+    answer = api_call.generate_answer(question=QUERY_TEXT, 
+                                      context=CONTEXT)
+    print(answer)
+    
     
 if __name__ == "__main__":
     main()
+    

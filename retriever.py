@@ -20,5 +20,4 @@ class retriever:
         query_embedding = self.embedding_model.embed_query(query_text)
 
         return query_embedding
-        
-        
+                

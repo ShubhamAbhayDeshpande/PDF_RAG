@@ -24,6 +24,8 @@ interaction = client.interactions.create(
     system_instruction=SYSTEM_INSTRUCTIONS,
 )
 
-print(f"Number of steps: {len(interaction.steps)}")
-for j, step in enumerate(interaction.steps):
-    print(f"step{j}: type={step.type}")
+print(interaction.output_text)
+
+# print(f"Number of steps: {len(interaction.steps)}")
+# for j, step in enumerate(interaction.steps):
+#     print(f"step{j}: type={step.type}")

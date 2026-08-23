@@ -69,15 +69,3 @@ class chunker:
 
         # return embeddings 
         return chunks     
-
-
-if __name__ == "__main__":
-    json_path = Path(__file__).resolve().parent / "jsondump" / "result.json"
-
-    with open(json_path, "r") as file:
-        jsonData = json.load(file)
-
-    chunker = textSplitter(jsonData)
-
-    documents_chunks = chunker.chunksFromJson()
-    print(f"Loaded {len(documents_chunks)} document objects")

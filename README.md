@@ -1,10 +1,12 @@
-# Google API Trial
+# A PDF-RAG system with local file embeddings
 
 A working PDF retrieval-augmented generation (RAG) prototype using a Tkinter desktop UI, ChromaDB, local sentence embeddings, and Google Gemini. The application retrieves relevant PDF chunks, sends those chunks to Gemini, and shows the source document, page, and extracted-image paths beside the answer.
 
+For my personal useage, I have used the free-tier Gemini API which comes with limited requests to the the Gemini. But, if one has a paid version, that will also work without any changes to the program. Just store the API key in a ```.env``` file in this folder with a variable name ```GEMINI_API_KEY```. 
+
 ## How it works
 
-1. PDFs in [pdfs/](pdfs) are scanned with PyMuPDF.
+1. PDFs in [pdfs/](pdfs) are scanned with PyMuPDF. The ```pdfs``` folder is not included in the repo. The user needs to make one and store all the pdfs there. 
 2. Text and embedded images are extracted. The parser writes page-level data to [jsondump/result.json](jsondump/result.json) and saves images in [extracted_images/](extracted_images).
 3. `chunker` converts each page into a LangChain `Document` and splits text with `RecursiveCharacterTextSplitter` using a 1,000-character chunk size and 20-character overlap. Metadata includes the document name, zero-based page number, chunk ID, image IDs, and image paths.
 4. `embedder` creates normalized `sentence-transformers/all-MiniLM-L6-v2` embeddings and stores them with the text and metadata in the `pdf_collection` Chroma collection under [chroma_db/](chroma_db).
@@ -94,3 +96,5 @@ python test_main.py
 - The Chroma collection is created with `create_collection`; rebuilding an existing database may require removing or renaming the existing `pdf_collection` first.
 - The Gemini request requires a valid `GEMINI_API_KEY` and network access.
 - The UI displays image paths and opens the first image from the selected result; it does not render images inside the window.
+
+### If anyone wants any improvements or sees any flaws which should be corrected, feel free to open a branch or make a fork. I will be happy to collaborate on this project. 

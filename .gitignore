@@ -1,6 +1,6 @@
 .vscode
 .env
-*.png
+extracted_images
 *.json
 *.pdf
 PythonEnv
